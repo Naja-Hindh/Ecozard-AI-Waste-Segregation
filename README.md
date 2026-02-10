@@ -190,6 +190,19 @@ user, supporting responsible and trustworthy AI behavior.
 
 ---
 
+## Backend Architecture
+
+Ecozard is designed with a modular backend using FastAPI.
+The backend handles image analysis using a pretrained vision model
+and applies rule-based logic to classify waste responsibly.
+
+For hackathon demonstration, the frontend is deployed independently
+to ensure stability and smooth user experience.
+The backend can be connected in production via API endpoints.
+
+
+---
+
 
 
 \## How to Run the Project Locally
