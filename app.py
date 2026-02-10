@@ -23,19 +23,19 @@ def classify_waste(label):
     label = label.lower()
 
     recyclable = [
-        "plastic", "bottle", "paper", "book", "glass",
+        "plastic", "bottle", "paper", "book", "glass","water bottle",
         "can", "metal", "tin", "aluminum", "container",
-        "bag", "wrapper", "packet", "foil", "pouch"
+        "bag", "wrapper", "packet", "foil", "pouch","cup", "coffee", "mug", "paper cup", "disposable cup","paper towel"
     ]
 
     organic = [
         "banana", "food", "fruit",
-        "egg", "leaf", "flower", "peel"
+        "egg", "leaf", "flower", "peel","vegetable"
     ]
 
     hazardous = [
         "battery", "bulb", "lamp", "light",
-        "chemical", "medicine", "electronic", "spray"
+        "chemical", "medicine", "electronic", "spray","loudspeaker", "speaker", "speaker unit", "loudspeaker system", "speaker system","tv","smartphone","phone","laptop","television", "television system","remote","mouse", "computer mouse","headset","earpodes"
     ]
 
     if any(word in label for word in recyclable):
