@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ecozard – Waste Wizard 🧙‍♂️♻️</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8f5e9;
+            text-align: center;
+            padding: 30px;
+        }
+        video, canvas {
+            width: 300px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 16px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🧙‍♂️ Ecozard – Waste Wizard</h1>
+<p>Point the camera at waste and capture a photo.</p>
+
+<video id="video" autoplay></video>
+<br>
+
+<button onclick="capturePhoto()">📸 Capture Photo</button>
+
+<hr style="margin:20px 0;">
+
+<p>OR upload an image</p>
+
+<input 
+    type="file"
+    id="fileInput"
+    accept="image/*"
+/>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<br>
+<button onclick="analyzeWaste()">Analyze Waste</button>
+
+<div class="result" id="result"></div>
+
+<script>
+const tips = {
+    Recyclable: "♻️ Clean and dry recyclable waste helps improve recycling efficiency.",
+    Organic: "🌱 Organic waste can be composted and returned safely to nature.",
+    Hazardous: "⚠️ Hazardous waste must be disposed separately to avoid harm."
+};
+
+let capturedBlob = null;
+let uploadedFile = null;
+
+// STEP 1: Open camera
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        document.getElementById("video").srcObject = stream;
+    })
+    .catch(err => {
+        alert("Camera access denied or not available");
+    });
+
+// STEP 2: Capture image
+function capturePhoto() {
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(blob => {
+        capturedBlob = blob;
+        document.getElementById("result").innerText = "📸 Photo captured!";
+    }, "image/jpeg");
+}
+document.getElementById("fileInput").addEventListener("change", function () {
+    uploadedFile = this.files[0];
+    capturedBlob = null; // clear camera image
+    document.getElementById("result").innerText = "📁 Image selected for analysis.";
+});
+
+
+// STEP 3: Send to backend
+async function analyzeWaste() {
+    const resultDiv = document.getElementById("result");
+
+    let imageToSend = capturedBlob || uploadedFile;
+
+if (!imageToSend) {
+    resultDiv.innerText = "⚠️ Capture a photo or upload an image first.";
+    return;
+}
+
+    const formData = new FormData();
+    formData.append("file", imageToSend, "image.jpg");
+
+
+    resultDiv.innerText = "🪄 Ecozard is analyzing...";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.waste_category === "Uncertain") {
+    resultDiv.innerHTML = `
+        🗂 Category: <b>Uncertain</b><br>
+        🔍 Detected: ${data.detected_object}<br><br>
+        ❓ <b>Not sure? Select the correct category below.</b><br><br>
+
+        <button onclick="selectCategory('Recyclable')">♻️ Recyclable</button>
+        <button onclick="selectCategory('Organic')">🌱 Organic</button>
+        <button onclick="selectCategory('Hazardous')">🔮 Hazardous</button>
+    `;
+} else {
+    resultDiv.innerHTML = `
+        🗂 Category: <b>${data.waste_category}</b><br>
+        🔍 Detected: ${data.detected_object}<br>
+        ✨ ${data.message}
+    `;
+}
+
+    } catch (err) {
+        resultDiv.innerText = "❌ Failed to connect to Ecozard.";
+    }
+}
+function selectCategory(category) {
+    const resultDiv = document.getElementById("result");
+
+    resultDiv.innerHTML = `
+        ✅ <b>${category}</b> selected.<br><br>
+        ${tips[category]}
+    `;
+}
+
+</script>
+
+</body>
+</html>

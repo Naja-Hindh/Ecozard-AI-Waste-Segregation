@@ -31,7 +31,8 @@ def classify_waste(label):
 
     recyclable = [
         "plastic", "bottle", "paper", "book", "glass",
-        "can", "metal", "tin", "aluminum", "container"
+        "can", "metal", "tin", "aluminum", "container",
+        "cup","coffee","paper cup","disposable cup"
     ]
 
     organic = [
