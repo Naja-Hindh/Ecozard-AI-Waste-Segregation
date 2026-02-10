@@ -12,6 +12,8 @@ hazardous waste through clear explanations and friendly wizard-style guidance.
 
 
 
+
+
 The project aligns with \*\*SDG 12 – Responsible Consumption and Production\*\*.
 
 
@@ -94,7 +96,17 @@ The focus of the solution is \*\*clarity and awareness\*\*, not perfect AI accur
 
 ---
 
+\## AI Approach
 
+\-Pretrained vision model
+
+\-Rule-based mapping
+
+\-No training done
+
+\-AI assists, does not guess
+
+---
 
 \## Tech Stack
 
@@ -136,7 +148,25 @@ No machine learning model training was performed.
 
 ---
 
+## Screenshots
 
+### Landing Page
+![Landing](screenshots/landing.png)
+
+### How It Works
+![How It Works](screenshots/how-it-works.png)
+
+### Analyze Waste
+![Analyze](screenshots/analyze.png)
+
+### Result – Clear Case
+![Clear Result](screenshots/result-clear.png)
+
+### Result – Uncertain Case
+![Uncertain Result](screenshots/result-uncertain.png)
+
+
+---
 
 \## Dataset Usage \& Ethics
 
