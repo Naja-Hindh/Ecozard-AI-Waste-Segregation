@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecozard - AI Waste Segregation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/ecozard-logo.png" alt="Ecozard Logo" class="logo-image">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#waste-guide" class="nav-link">Waste Guide</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#analyze" class="nav-cta">Analyze Waste</a></li>
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Split Panel Container -->
+    <div class="split-container">
+        <!-- Left Panel (Scrollable Content) -->
+        <div class="left-panel">
+            <!-- Hero Content -->
+            <section class="hero-section" id="home">
+                <div class="hero-content">
+                    <h1 class="hero-title">Sorting Waste,<br><span class="gradient-text">Made Magical.</span></h1>
+                    <p class="hero-tagline">Ecozard helps you choose the right bin — instantly, responsibly, and with a
+                        little magic.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary">Start Sorting</button>
+                        <button class="btn btn-secondary">Learn How</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="how-it-works-section" id="how-it-works">
+                <h2 class="section-title">How Ecozard <span class="gradient-text">Guides You</span></h2>
+                <div class="steps-container">
+                    <div class="step-card">
+                        <div class="step-icon">📸</div>
+                        <h3>Capture or Upload</h3>
+                        <p>Take a photo or upload an image of your waste item</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon">🧠</div>
+                        <h3>AI Analyzes</h3>
+                        <p>Ecozard visually identifies the object and its category</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon">♻️</div>
+                        <h3>Get Guidance</h3>
+                        <p>Receive the right bin choice and an eco-friendly tip</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analyze Waste Content -->
+            <section class="analyze-section" id="analyze">
+                <div class="analyze-content">
+                    <h2 class="analyze-title">Let Ecozard <span class="gradient-text">Analyze Your Waste</span></h2>
+                    <p class="analyze-subtitle">Point your camera or upload an image — I'll guide you to the right bin.
+                    </p>
+
+                    <!-- Sample Examples -->
+                    <div class="sample-examples">
+                        <p class="sample-label">Or try with sample waste:</p>
+                        <div class="sample-buttons">
+                            <button class="sample-btn" data-sample="banana">🍌 Banana Peel</button>
+                            <button class="sample-btn" data-sample="bottle">🧴 Plastic Bottle</button>
+                            <button class="sample-btn" data-sample="battery">🔋 Battery</button>
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImage" alt="Preview">
+                        <div class="preview-placeholder">
+                            <span class="placeholder-icon">🖼️</span>
+                            <p>No image selected</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-capture" id="captureBtn">
+                            <span class="btn-icon">📸</span>
+                            Capture Photo
+                        </button>
+                        <button class="btn btn-upload" id="uploadBtn">
+                            <span class="btn-icon">📁</span>
+                            Upload Image
+                        </button>
+                    </div>
+
+                    <!-- Hidden File Input -->
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+
+                    <!-- Analyze Button -->
+                    <button class="btn btn-analyze" id="analyzeBtn" disabled>
+                        <span class="btn-icon">✨</span>
+                        Analyze Waste
+                    </button>
+
+                    <!-- Ecozard's Wisdom Space -->
+                    <div id="ecozard-wisdom" class="wisdom-space">
+                        <!-- Result Card -->
+                        <div class="result-card" id="resultCard">
+                            <div class="result-header">
+                                <span class="result-icon">🧙</span>
+                                <h3 class="result-title">Ecozard's Wisdom</h3>
+                            </div>
+                            <div class="result-body">
+                                <div class="wizard-spell" id="wizardSpell">
+                                    <span class="spell-icon">✨</span>
+                                    <p id="spellMessage">The sorting spell reveals...</p>
+                                </div>
+
+                                <div class="result-item">
+                                    <strong>Detected Item:</strong>
+                                    <span id="detectedItem">Plastic Bottle</span>
+                                </div>
+                                <div class="result-item">
+                                    <strong>Category:</strong>
+                                    <span class="category-badge" id="categoryBadge">Recyclable</span>
+                                </div>
+                                <div class="result-tip">
+                                    <strong>♻️ Eco Tip:</strong>
+                                    <p id="ecoTip">Rinse the bottle before recycling to prevent contamination!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Uncertainty Card -->
+                        <div class="uncertainty-card" id="uncertaintyCard">
+                            <div class="uncertainty-header">
+                                <span class="uncertainty-icon">🤔</span>
+                                <h3>Help Ecozard Learn</h3>
+                                <p>The magic is unclear on this one. Your expertise would help! Which category fits
+                                    best?</p>
+                            </div>
+                            <div class="category-choices">
+                                <button class="category-btn recyclable-btn" data-category="recyclable">
+                                    <span>♻️</span>
+                                    Recyclable
+                                </button>
+                                <button class="category-btn organic-btn" data-category="organic">
+                                    <span>🌱</span>
+                                    Organic
+                                </button>
+                                <button class="category-btn hazardous-btn" data-category="hazardous">
+                                    <span>🔮</span>
+                                    Hazardous
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <p>🧙‍♂️ Casting a sorting spell…</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why Ecozard Asks Section -->
+            <section class="why-ask-section">
+                <div class="why-ask-card">
+                    <div class="why-ask-icon">🧙‍♂️</div>
+                    <h3>Why Ecozard Sometimes Asks for Your Help</h3>
+                    <div class="why-ask-content">
+                        <p><strong>AI doesn't guess.</strong> When visual cues are unclear, Ecozard asks rather than
+                            making assumptions.</p>
+                        <p><strong>Local rules vary.</strong> Some waste disposal depends on your region's recycling
+                            facilities and guidelines.</p>
+                        <p><strong>Learning together.</strong> Your input helps Ecozard improve and prevents sorting
+                            mistakes. Every correction makes the magic stronger! ✨</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Waste Guide Section -->
+            <section class="waste-guide-section" id="waste-guide">
+                <h2 class="section-title">Waste <span class="gradient-text">Guide</span></h2>
+                <p class="section-subtitle">Learn what goes where</p>
+
+                <div class="guide-cards">
+                    <div class="guide-card recyclable">
+                        <div class="guide-icon">♻️</div>
+                        <h3>Recyclable</h3>
+                        <ul>
+                            <li>Plastic bottles & containers</li>
+                            <li>Paper & cardboard</li>
+                            <li>Glass bottles & jars</li>
+                            <li>Metal cans & foil</li>
+                        </ul>
+                    </div>
+
+                    <div class="guide-card organic">
+                        <div class="guide-icon">🌱</div>
+                        <h3>Organic</h3>
+                        <ul>
+                            <li>Food scraps & peels</li>
+                            <li>Garden waste</li>
+                            <li>Coffee grounds & tea bags</li>
+                            <li>Compostable materials</li>
+                        </ul>
+                    </div>
+
+                    <div class="guide-card hazardous">
+                        <div class="guide-icon">🔮</div>
+                        <h3>Hazardous</h3>
+                        <ul>
+                            <li>Batteries & electronics</li>
+                            <li>Paint & chemicals</li>
+                            <li>Light bulbs & CFLs</li>
+                            <li>Medications</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="about-section" id="about">
+                <h2 class="section-title">About <span class="gradient-text">Ecozard</span></h2>
+                <div class="about-content">
+                    <p>Ecozard is an AI-powered waste segregation assistant aligned with <strong>UN Sustainable
+                            Development Goal 12: Responsible Consumption and Production</strong>.</p>
+
+                    <p>Using computer vision and responsible AI practices, Ecozard helps you make informed waste sorting
+                        decisions. When our AI is uncertain, we ask for your help — because responsible AI means knowing
+                        its limits and learning with you.</p>
+
+                    <p>Every correct sort you make contributes to a cleaner planet and helps Ecozard become more
+                        accurate for everyone. Together, we're making waste sorting magical! ✨</p>
+
+                    <div class="sdg-badge">
+                        <span class="badge-icon">🌍</span>
+                        <span>SDG 12: Responsible Consumption</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Panel (Fixed Background) -->
+        <div class="right-panel"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
