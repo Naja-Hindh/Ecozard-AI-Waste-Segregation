@@ -163,7 +163,7 @@ No machine learning model training was performed.
 ![Clear Result](screenshots/result-clear.png)
 
 ### Result – Uncertain Case
-![Uncertain Result](screenshots/result-uncertain.png)
+![Uncertain Result](screenshots/Screenshot 2026-02-11 051025.png)
 
 
 ---
