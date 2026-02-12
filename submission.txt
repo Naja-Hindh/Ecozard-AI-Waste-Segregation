@@ -1,0 +1,2 @@
+GitHub repository link:  https://github.com/Naja-Hindh/Ecozard-AI-Waste-Segregation
+deployed application link: https://gentle-babka-c622f8.netlify.app/

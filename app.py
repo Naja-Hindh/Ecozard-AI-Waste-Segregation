@@ -4,55 +4,23 @@ from transformers import pipeline
 from PIL import Image
 import io
 
+from analyze import classify_waste
+
 app = FastAPI()
 
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Load model once
 classifier = pipeline(
     "image-classification",
     model="google/vit-base-patch16-224"
 )
-
-def classify_waste(label):
-    label = label.lower()
-
-    recyclable = [
-        "plastic", "bottle", "paper", "book", "glass","water bottle",
-        "can", "metal", "tin", "aluminum", "container",
-        "bag", "wrapper", "packet", "foil", "pouch","cup", "coffee", "mug", "paper cup", "disposable cup","paper towel"
-    ]
-
-    organic = [
-        "banana", "food", "fruit",
-        "egg", "leaf", "flower", "peel","vegetable"
-    ]
-
-    hazardous = [
-        "battery", "bulb", "lamp", "light",
-        "chemical", "medicine", "electronic", "spray","loudspeaker", "speaker", "speaker unit", "loudspeaker system", "speaker system","tv","smartphone","phone","laptop","television", "television system","remote","mouse", "computer mouse","headset","earpodes"
-    ]
-
-    if any(word in label for word in recyclable):
-        return "Recyclable"
-    elif any(word in label for word in organic):
-        return "Organic"
-    elif any(word in label for word in hazardous):
-        return "Hazardous"
-    else:
-        return "Uncertain"
-
-wizard_messages = {
-    "Recyclable": "✨ Recyclo Spell cast! Place this in the dry waste bin.",
-    "Organic": "🌱 Naturia Charm activated! Perfect for composting.",
-    "Hazardous": "⚠️ Caution Hex detected! Dispose safely.",
-    "Uncertain": "🤔 My magic is unclear. Can you help choose the right category?"
-}
 
 @app.post("/analyze")
 async def analyze_image(file: UploadFile = File(...)):
@@ -63,13 +31,19 @@ async def analyze_image(file: UploadFile = File(...)):
     label = results[0]["label"]
     confidence = results[0]["score"]
 
-    category = classify_waste(label)
-    if confidence < 0.6:
-        category = "Uncertain"
+    decision = classify_waste(label, confidence)
 
     return {
         "detected_object": label,
         "confidence": round(confidence, 2),
-        "waste_category": category,
-        "message": wizard_messages[category]
+        **decision
     }
+import os
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8000))
+    )

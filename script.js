@@ -281,7 +281,11 @@ function hideResults() {
 
 // Analyze Waste Button
 analyzeBtn.addEventListener('click', async () => {
-    if (!selectedImage) return;
+    // Validate image is selected
+    if (!selectedImage) {
+        alert('⚠️ Please select or capture an image first!');
+        return;
+    }
 
     // Show loading
     loadingSpinner.classList.add('show');
@@ -292,33 +296,62 @@ analyzeBtn.addEventListener('click', async () => {
     const sampleBtn = document.querySelector('.sample-btn:focus, .sample-btn:active');
     const hasSampleData = sampleBtn && sampleBtn.sampleData;
 
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Hide loading
-    loadingSpinner.classList.remove('show');
-    analyzeBtn.disabled = false;
-
     if (hasSampleData) {
+        // Simulate processing time for samples
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Hide loading
+        loadingSpinner.classList.remove('show');
+        analyzeBtn.disabled = false;
+
         // Show sample result
         displayResults(sampleBtn.sampleData);
     } else {
-        // Try API or show demo result
+        // Call FastAPI backend
         try {
             const formData = new FormData();
-            formData.append('image', selectedImage);
+            formData.append('file', selectedImage); // Backend expects 'file' field
 
-            const response = await fetch('/analyze', {
+            const response = await fetch('http://127.0.0.1:8000/analyze', {
                 method: 'POST',
                 body: formData
             });
 
+            // Hide loading
+            loadingSpinner.classList.remove('show');
+            analyzeBtn.disabled = false;
+
+            if (!response.ok) {
+                throw new Error(`Backend error: ${response.status} ${response.statusText}`);
+            }
+
             const data = await response.json();
-            displayResults(data);
+
+            // Map backend response to frontend format
+            const mappedResult = {
+                item: data.detected_object,
+                confidence: data.confidence,
+                category: data.waste_category,
+                wizardMessage: data.message,
+                tip: data.explanation
+            };
+
+            displayResults(mappedResult);
 
         } catch (error) {
+            // Hide loading
+            loadingSpinner.classList.remove('show');
+            analyzeBtn.disabled = false;
+
             console.error('Analysis error:', error);
-            displayDemoResult();
+
+            // Check if it's a network/connection error
+            if (error.message.includes('fetch') || error.message.includes('Network') ||
+                error.name === 'TypeError') {
+                alert('🔌 Unable to connect to the backend.\n\nPlease ensure:\n- FastAPI server is running at http://127.0.0.1:8000\n- The /analyze endpoint is available');
+            } else {
+                alert(`❌ Error analyzing image:\n${error.message}`);
+            }
         }
     }
 
@@ -337,22 +370,33 @@ analyzeBtn.addEventListener('click', async () => {
 
 // Display analysis results
 function displayResults(data) {
-    const { category, item, tip, confidence } = data;
+    const { category, item, tip, confidence, wizardMessage } = data;
 
-    if (confidence && confidence < 0.6) {
+    // Check for uncertain category or low confidence
+    if (category === 'Uncertain' || (confidence && confidence < 0.6)) {
         // Show uncertainty card
         showUncertaintyCard();
     } else {
-        // Set wizard spell message
-        const spellMessages = {
-            'Recyclable': '♻️ Recyclio Sortum! This item can begin a second life. Clean it and recycle.',
-            'Organic': '🌱 Naturalis Returno! This waste returns to the earth through composting.',
-            'Hazardous': '🔮 Cautio Maxima! This item needs special care. Dispose safely.'
-        };
-        document.getElementById('spellMessage').textContent = spellMessages[category] || 'The sorting spell reveals...';
+        // Use custom wizard message from backend if provided, otherwise use default
+        let spellMessage;
+        if (wizardMessage) {
+            spellMessage = wizardMessage;
+        } else {
+            const spellMessages = {
+                'Recyclable': '♻️ Recyclio Sortum! This item can begin a second life. Clean it and recycle.',
+                'Organic': '🌱 Naturalis Returno! This waste returns to the earth through composting.',
+                'Hazardous': '🔮 Cautio Maxima! This item needs special care. Dispose safely.'
+            };
+            spellMessage = spellMessages[category] || 'The sorting spell reveals...';
+        }
+        document.getElementById('spellMessage').textContent = spellMessage;
 
-        // Set detected item
-        document.getElementById('detectedItem').textContent = item || 'Unknown item';
+        // Set detected item with confidence if available
+        let itemText = item || 'Unknown item';
+        if (confidence !== undefined && confidence !== null) {
+            itemText += ` (${(confidence * 100).toFixed(2)}% confidence)`;
+        }
+        document.getElementById('detectedItem').textContent = itemText;
 
         // Set category badge
         const categoryBadge = document.getElementById('categoryBadge');
